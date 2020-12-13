@@ -17,4 +17,6 @@ add_definitions(-DUNICODE -D_UNICODE)
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 
 add_subdirectory(duilib)
+add_subdirectory(miniblink)
+
 

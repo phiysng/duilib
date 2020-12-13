@@ -108,7 +108,7 @@ LRESULT WindowImplBase::OnNcCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 	}
 
 	if ( ::IsZoomed(m_hWnd))
-	{	// ���ʱ�����㵱ǰ��ʾ�����ʺϿ��߶�
+	{	// 最大化时，计算当前显示器最适合宽高度
 		MONITORINFO oMonitor = {};
 		oMonitor.cbSize = sizeof(oMonitor);
 		::GetMonitorInfo(::MonitorFromWindow(*this, MONITOR_DEFAULTTONEAREST), &oMonitor);
@@ -181,7 +181,7 @@ LRESULT WindowImplBase::OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam,
 	CDuiRect rcMonitor = oMonitor.rcMonitor;
 	rcWork.Offset(-oMonitor.rcMonitor.left, -oMonitor.rcMonitor.top);
 
-	// �������ʱ����ȷ��ԭ������
+	// 计算最大化时，正确的原点坐标
 	lpMMI->ptMaxPosition.x	= rcWork.left;
 	lpMMI->ptMaxPosition.y	= rcWork.top;
 
