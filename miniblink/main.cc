@@ -30,15 +30,24 @@ public:
 		LRESULT lRes = 0;
 		if (uMsg == WM_CREATE)
 		{
-			CControlUI* pWnd = new CButtonUI;
-			pWnd->SetName(_T("btnHello"));//设置控件的名称，这个名称用于标识每一个控件，必须唯一，相当于MFC里面的控件ID
-			pWnd->SetText(_T("Hello World"));//设置文字
-			pWnd->SetBkColor(0xFF00FF00);//设置背景色
+            m_PaintManager.Init(m_hWnd);
+            CDialogBuilder builder;
+            CControlUI* pRoot = builder.Create(_T("wizardWnd.xml"), (UINT)0, NULL, &m_PaintManager);
+            ASSERT(pRoot && "Failed to parse XML");
+            m_PaintManager.AttachDialog(pRoot);
+            m_PaintManager.AddNotifier(this);
+            return 0;
+
+
+			// CControlUI* pWnd = new CButtonUI;
+			// pWnd->SetName(_T("btnHello"));//设置控件的名称，这个名称用于标识每一个控件，必须唯一，相当于MFC里面的控件ID
+			// pWnd->SetText(_T("Hello World"));//设置文字
+			// pWnd->SetBkColor(0xFF00FF00);//设置背景色
  
-			m_PaintManager.Init(m_hWnd);
-			m_PaintManager.AttachDialog(pWnd);
-			m_PaintManager.AddNotifier(this);//添加控件等消息响应，这样消息就会传达到duilib的消息循环，我们可以在Notify函数里做消息处理
-			return lRes;
+			// m_PaintManager.Init(m_hWnd);
+			// m_PaintManager.AttachDialog(pWnd);
+			// m_PaintManager.AddNotifier(this);//添加控件等消息响应，这样消息就会传达到duilib的消息循环，我们可以在Notify函数里做消息处理
+			// return lRes;
 		}
  
 		if (m_PaintManager.MessageHandler(uMsg, wParam, lParam, lRes))
@@ -52,6 +61,21 @@ protected:
 	CPaintManagerUI m_PaintManager;
 
 };
+
+
+//class WizardWindow : public WindowImplBase
+//{
+//public:
+//	  
+//	UILIB_RESOURCETYPE GetResourceType() const {
+//		return UILIB_FILE;
+//	}
+//
+//
+//
+//
+//}
+
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
     
