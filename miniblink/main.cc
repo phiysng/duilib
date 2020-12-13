@@ -7,83 +7,56 @@
 
 using namespace DuiLib;
 
-class WizardWindow : public CWindowWnd, public INotifyUI
+class WizardWindow : public WindowImplBase
 {
 public:
-    LPCTSTR GetWindowClassName(void) const override{
-        return L"MBControlWindow";
-    }
 
-    virtual void Notify(TNotifyUI& msg)
-	{
-		if (msg.sType == _T("click"))
-		{
-			if (msg.pSender->GetName() == _T("btnHello"));
-			{
-				::MessageBox(NULL, _T("我是按钮"), _T("点击了按钮"), NULL);
-			}
-		}
-    }
+	WizardWindow() = default;
 
-    virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
-	{
-		LRESULT lRes = 0;
-		if (uMsg == WM_CREATE)
-		{
-            m_PaintManager.Init(m_hWnd);
-            CDialogBuilder builder;
-            CControlUI* pRoot = builder.Create(_T("wizardWnd.xml"), (UINT)0, NULL, &m_PaintManager);
-            ASSERT(pRoot && "Failed to parse XML");
-            m_PaintManager.AttachDialog(pRoot);
-            m_PaintManager.AddNotifier(this);
-            return 0;
+	~WizardWindow(void) {}
 
 
-			// CControlUI* pWnd = new CButtonUI;
-			// pWnd->SetName(_T("btnHello"));//设置控件的名称，这个名称用于标识每一个控件，必须唯一，相当于MFC里面的控件ID
-			// pWnd->SetText(_T("Hello World"));//设置文字
-			// pWnd->SetBkColor(0xFF00FF00);//设置背景色
- 
-			// m_PaintManager.Init(m_hWnd);
-			// m_PaintManager.AttachDialog(pWnd);
-			// m_PaintManager.AddNotifier(this);//添加控件等消息响应，这样消息就会传达到duilib的消息循环，我们可以在Notify函数里做消息处理
-			// return lRes;
-		}
- 
-		if (m_PaintManager.MessageHandler(uMsg, wParam, lParam, lRes))
-		{
-			return lRes;
-		}
-		return __super::HandleMessage(uMsg, wParam, lParam);
+	UILIB_RESOURCETYPE GetResourceType() const {
+		return UILIB_FILE;
 	}
 
-protected:
-	CPaintManagerUI m_PaintManager;
+	CDuiString GetSkinFile() override {
+		return L"wizardWnd.xml";
+	}
+
+	CDuiString GetSkinFolder() override {
+		return L"";
+	}
+
+	LPCTSTR GetWindowClassName() const override {
+		//static auto name = L("WizardWnd");
+		return _T("WizardWndEx");
+	}
+
+	void OnFinalMessage(HWND hWnd) override {
+		__super::OnFinalMessage(hWnd);
+
+		delete this;
+	}
+
+
 
 };
 
 
-//class WizardWindow : public WindowImplBase
-//{
-//public:
-//	  
-//	UILIB_RESOURCETYPE GetResourceType() const {
-//		return UILIB_FILE;
-//	}
-//
-//
-//
-//
-//}
-
-
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
     
-    CPaintManagerUI::SetInstance(hInstance);
- 
-	WizardWindow wizardWnd;
-	wizardWnd.Create(NULL, _T("DUIWnd"), UI_WNDSTYLE_FRAME, WS_EX_WINDOWEDGE);
-	wizardWnd.ShowModal();
+
+	CPaintManagerUI::SetInstance(hInstance);
+	CPaintManagerUI::SetResourcePath(CPaintManagerUI::GetInstancePath() + _T("\\skin"));
+
+	WizardWindow* pFrame = new WizardWindow();
+	if (pFrame == NULL) return 0;
+	pFrame->Create(NULL, _T("WizardWindowEx"), UI_WNDSTYLE_FRAME, 0L, 0, 0, 800, 572);
+	pFrame->CenterWindow();
+	::ShowWindow(*pFrame, SW_SHOW);
+
+	CPaintManagerUI::MessageLoop();
 
     return 0;
 }
