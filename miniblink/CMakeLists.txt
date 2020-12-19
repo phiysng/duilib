@@ -9,7 +9,7 @@ project(mini-browser)
 
 add_definitions(-DUILIB_EXPORTS -DUILIB_STATIC)
 
-add_executable(mini-browser WIN32 main.cc)
+add_executable(mini-browser WIN32 wke.h main.cc)
 target_link_libraries(mini-browser duilib)
 
 
